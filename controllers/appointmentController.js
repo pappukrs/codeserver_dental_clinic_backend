@@ -58,3 +58,15 @@ exports.createAppointment = async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 };
+
+
+// Get all appointments
+exports.getAllAppointment = async (req, res) => {
+  try {
+    const appointments = await Appointment.find(); // Fetch all appointments from the database
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Failed to fetch appointments." });
+  }
+};
