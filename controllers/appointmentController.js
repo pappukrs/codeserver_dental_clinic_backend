@@ -36,15 +36,19 @@ exports.createAppointment = async (req, res) => {
       from: process.env.EMAIL_USER,
       to: process.env.RECIPIENT_EMAIL,
       subject: "New Appointment Received",
-      text: `
-        You have a new appointment request:
-        - Name: ${name}
-        - Phone: ${phone}
-        - Email: ${email}
-        - Date of Birth: ${dob}
-        - Message: ${message}
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+          <h2 style="color: #2c3e50;">You have a new appointment request:</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Phone:</strong> ${phone}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Date of Birth:</strong> ${dob}</p>
+          <p><strong>Message:</strong></p>
+          <p style="white-space: pre-line; background-color: #f4f4f4; padding: 10px; border-radius: 5px;">${message}</p>
+        </div>
       `,
     };
+    
 
     await transporter.sendMail(mailOptions);
 
