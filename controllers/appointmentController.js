@@ -20,15 +20,15 @@ transporter.verify((error, success) => {
 });
 
 exports.createAppointment = async (req, res) => {
-  const { name, phone, email, dob, message } = req.body;
+  const { name, phone, email, date, message } = req.body;
 
-  if (!name || !phone || !email || !dob || !message) {
+  if (!name || !phone || !email || !date || !message) {
     return res.status(400).json({ error: "All fields are required!" });
   }
 
   try {
     // Save to database
-    const appointment = new Appointment({ name, phone, email, dob, message });
+    const appointment = new Appointment({ name, phone, email, date, message });
     await appointment.save();
 
     // Send email
@@ -42,7 +42,7 @@ exports.createAppointment = async (req, res) => {
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Phone:</strong> ${phone}</p>
           <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Date of Birth:</strong> ${dob}</p>
+          <p><strong>Date of Birth:</strong> ${date}</p>
           <p><strong>Message:</strong></p>
           <p style="white-space: pre-line; background-color: #f4f4f4; padding: 10px; border-radius: 5px;">${message}</p>
         </div>
