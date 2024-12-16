@@ -19,7 +19,7 @@ transporter.verify((error, success) => {
   }
 });
 
-exports.createAppointment = async (req, res) => {
+module.exports.createAppointment = async (req, res) => {
   const { name, phone, email, date, message } = req.body;
 
   // Validate required fields
@@ -91,7 +91,7 @@ exports.createAppointment = async (req, res) => {
 };
 
 // Get all appointments
-exports.getAllAppointments = async (req, res) => {
+module.exports.getAllAppointments = async (req, res) => {
   try {
     const appointments = await Appointment.find(); // Fetch all appointments from the database
     res.status(200).json(appointments);

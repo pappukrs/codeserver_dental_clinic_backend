@@ -1,8 +1,8 @@
 const express = require("express");
-const { createAppointment ,getAllAppointment} = require("../controllers/appointmentController");
+const { createAppointment, getAllAppointments } = require("../controllers/appointmentController");
 const router = express.Router();
 
 router.post("/appointment", createAppointment);
-router.get("/appointment", getAllAppointment);
+router.get("/appointment", getAllAppointments);
 
-module.exports = router;
+module.exports = router; // Directly export the router

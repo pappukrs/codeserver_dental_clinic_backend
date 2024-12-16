@@ -4,7 +4,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const appointmentRoutes = require("./routes/appointmentRoutes");
+const appointmentRoutes = require("./routes/appointmentRoutes.js"); // Import as is
+// console.log("appointmentRoutes ",appointmentRoutes )
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,7 +29,7 @@ app.get('/', (req, res) => {
 });
 
 // Routes
-app.use("/api", appointmentRoutes);
+app.use("/api", appointmentRoutes); // Use the router directly
 
 // Start server
 app.listen(PORT, () => {
