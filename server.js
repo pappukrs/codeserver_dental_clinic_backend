@@ -11,18 +11,21 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(bodyParser.json());
+
+// Allow all origins
 app.use(cors());
 
+// Handle preflight requests for all routes
+app.options('*', cors()); // This will handle OPTIONS requests
+
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
-})
+mongoose.connect(process.env.MONGO_URI, {})
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-
-  app.get('/',(req,res)=>{
-    res.send("hello world")
-  })
+app.get('/', (req, res) => {
+  res.send("hello world");
+});
 
 // Routes
 app.use("/api", appointmentRoutes);
