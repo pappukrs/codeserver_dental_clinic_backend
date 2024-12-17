@@ -6,6 +6,15 @@ const appointmentSchema = new mongoose.Schema({
   email: { type: String, required: true },
   date: { type: Date, required: true },
   message: { type: String, required: true },
+  appointmentStatus: { 
+    type: String, 
+    enum: ['pending', 'confirmed', 'waiting'], 
+    default: 'pending' 
+  },
+  scheduleTime: { 
+    type: Date, 
+    default: null 
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Appointment", appointmentSchema);
