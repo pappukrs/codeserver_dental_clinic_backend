@@ -91,7 +91,7 @@ module.exports.getAllAppointments = async (req, res) => {
 
 // Schedule an appointment (update status and schedule time)
 module.exports.scheduleAppointment = async (req, res) => {
-  const { status, scheduleTime } = req.body;
+  const { status, scheduleTime,clinicMsg } = req.body;
 
   try {
     const appointment = await Appointment.findById(req.params.id);
@@ -100,9 +100,9 @@ module.exports.scheduleAppointment = async (req, res) => {
     }
 
     // Update the status and schedule time
-    appointment.appointmentStatus = status || appointment.appointmentStatus;
-    appointment.scheduleTime = scheduleTime || appointment.scheduleTime;
-
+    appointment.appointmentStatus = status || appointment?.appointmentStatus;
+    appointment.scheduleTime = scheduleTime || appointment?.scheduleTime;
+    appointment.clinicMsg = clinicMsg || appointment?.clinicMsg
     await appointment.save();
 
     // Send confirmation email to both clinic and user
@@ -116,6 +116,8 @@ module.exports.scheduleAppointment = async (req, res) => {
           <p><strong>Name:</strong> ${appointment.name}</p>
           <p><strong>Status:</strong> ${appointment.appointmentStatus}</p>
           <p><strong>Scheduled Time:</strong> ${scheduleTime}</p>
+          <p><strong>Msg:</strong> ${clinicMsg}</p>
+
         </div>
       `,
     };
@@ -130,6 +132,7 @@ module.exports.scheduleAppointment = async (req, res) => {
           <p><strong>Date:</strong> ${appointment.date}</p>
           <p><strong>Status:</strong> ${appointment.appointmentStatus}</p>
           <p><strong>Scheduled Time:</strong> ${scheduleTime}</p>
+          <p><strong>Msg:</strong> ${clinicMsg}</p>
         </div>
       `,
     };
@@ -145,6 +148,8 @@ module.exports.scheduleAppointment = async (req, res) => {
 
 // Get appointments by status
 module.exports.getAppointmentsByStatus = async (req, res) => {
+
+  console.log("getAppointmentsByStatus gets called")
   const { status } = req.params;
 
   try {
