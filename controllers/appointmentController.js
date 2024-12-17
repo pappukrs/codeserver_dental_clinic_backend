@@ -80,9 +80,9 @@ module.exports.createAppointment = async (req, res) => {
 };
 
 // Get all appointments
-module.exports.getAllAppointments = async (req, res) => {
+module.exports.getAllPendingAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find(); // Fetch all appointments from the database
+    const appointments = await Appointment.find({appointmentStatus:'pending'}); // Fetch all appointments from the database
     res.status(200).json(appointments);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch appointments." });
