@@ -93,6 +93,8 @@ module.exports.getAllAppointments = async (req, res) => {
 module.exports.scheduleAppointment = async (req, res) => {
   const { appointmentStatus, scheduleTime,clinicMsg } = req.body;
 
+  console.log("{ appointmentStatus, scheduleTime,clinicMsg } ",{ appointmentStatus, scheduleTime,clinicMsg } )
+
   try {
     const appointment = await Appointment.findById(req.params.id);
     if (!appointment) {
