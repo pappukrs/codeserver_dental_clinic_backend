@@ -15,6 +15,10 @@ const appointmentSchema = new mongoose.Schema({
     type: Date, 
     default: null 
   },
+  clinicMsg:{
+    type:String,
+    default:null
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Appointment", appointmentSchema);
