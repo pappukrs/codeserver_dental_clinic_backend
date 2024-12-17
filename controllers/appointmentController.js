@@ -91,7 +91,7 @@ module.exports.getAllAppointments = async (req, res) => {
 
 // Schedule an appointment (update status and schedule time)
 module.exports.scheduleAppointment = async (req, res) => {
-  const { status, scheduleTime,clinicMsg } = req.body;
+  const { appointmentStatus, scheduleTime,clinicMsg } = req.body;
 
   try {
     const appointment = await Appointment.findById(req.params.id);
@@ -100,7 +100,7 @@ module.exports.scheduleAppointment = async (req, res) => {
     }
 
     // Update the status and schedule time
-    appointment.appointmentStatus = status || appointment?.appointmentStatus;
+    appointment.appointmentStatus =appointmentStatus || appointment?.appointmentStatus;
     appointment.scheduleTime = scheduleTime || appointment?.scheduleTime;
     appointment.clinicMsg = clinicMsg || appointment?.clinicMsg
     await appointment.save();
@@ -112,12 +112,12 @@ module.exports.scheduleAppointment = async (req, res) => {
       subject: "Appointment Scheduled",
       html: `
         <div>
-          <h2>Your appointment has been scheduled:</h2>
+          <h2>Appointment has been Successfully scheduled:</h2>
           <p><strong>Name:</strong> ${appointment.name}</p>
+           <p><strong>Date:</strong> ${appointment.date}</p>
           <p><strong>Status:</strong> ${appointment.appointmentStatus}</p>
-          <p><strong>Scheduled Time:</strong> ${scheduleTime}</p>
-          <p><strong>Msg:</strong> ${clinicMsg}</p>
-
+          <p><strong>Scheduled Time:</strong> ${appointment.scheduleTime}</p>
+          <p><strong>Msg:</strong> ${appointment.clinicMsg}</p>
         </div>
       `,
     };
@@ -129,10 +129,11 @@ module.exports.scheduleAppointment = async (req, res) => {
       html: `
         <div>
           <h2>Your appointment has been scheduled:</h2>
-          <p><strong>Date:</strong> ${appointment.date}</p>
+          <p><strong>Name:</strong> ${appointment.name}</p>
+           <p><strong>Date:</strong> ${appointment.date}</p>
           <p><strong>Status:</strong> ${appointment.appointmentStatus}</p>
-          <p><strong>Scheduled Time:</strong> ${scheduleTime}</p>
-          <p><strong>Msg:</strong> ${clinicMsg}</p>
+          <p><strong>Scheduled Time:</strong> ${appointment.scheduleTime}</p>
+          <p><strong>Msg:</strong> ${appointment.clinicMsg}</p>
         </div>
       `,
     };
