@@ -19,6 +19,7 @@ transporter.verify((error, success) => {
   }
 });
 
+// Create a new appointment
 module.exports.createAppointment = async (req, res) => {
   const { name, phone, email, date, message } = req.body;
 
@@ -32,60 +33,48 @@ module.exports.createAppointment = async (req, res) => {
     const appointment = new Appointment({ name, phone, email, date, message });
     await appointment.save();
 
-    // Email to clinic
+    // Send emails to clinic and user (as shown earlier)
     const clinicMailOptions = {
       from: process.env.EMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL, // Clinic email from environment variable
+      to: process.env.RECIPIENT_EMAIL,
       subject: "New Appointment Received",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2 style="color: #2c3e50;">You have a new appointment request:</h2>
+          <h2>You have a new appointment request:</h2>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Phone:</strong> ${phone}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Date:</strong> ${date}</p>
           <p><strong>Message:</strong></p>
-          <p style="white-space: pre-line; background-color: #f4f4f4; padding: 10px; border-radius: 5px;">${message}</p>
+          <p>${message}</p>
         </div>
       `,
     };
 
-    // Email to user
     const userMailOptions = {
       from: process.env.EMAIL_USER,
-      to: email, // Email from request body
+      to: email,
       subject: "Appointment Booked",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2 style="color: #2c3e50;">Appointment Confirmation</h2>
+          <h2>Appointment Confirmation</h2>
           <p>Dear ${name},</p>
-          <p>Thank you for booking an appointment with us. Here are the details:</p>
+          <p>Thank you for booking an appointment. Here are the details:</p>
           <ul>
             <li><strong>Date:</strong> ${date}</li>
             <li><strong>Phone:</strong> ${phone}</li>
             <li><strong>Message:</strong> ${message}</li>
           </ul>
-          <p>Our team will contact you shortly. If you have any questions, feel free to reply to this email.</p>
-          <p>Best regards,<br>Clinic Team</p>
         </div>
       `,
     };
 
     // Send emails
     await transporter.sendMail(clinicMailOptions);
-    console.log("Email sent to clinic.");
-
-    try {
-      await transporter.sendMail(userMailOptions);
-      console.log("Email sent to user.");
-    } catch (emailError) {
-      console.error("Failed to send email to user:", emailError.message);
-      // Log this or notify admin if user email fails
-    }
+    await transporter.sendMail(userMailOptions);
 
     res.status(201).json({ success: "Appointment created and emails sent!" });
   } catch (error) {
-    console.error("Error:", error);
     res.status(500).json({ error: "Internal server error." });
   }
 };
@@ -96,7 +85,72 @@ module.exports.getAllAppointments = async (req, res) => {
     const appointments = await Appointment.find(); // Fetch all appointments from the database
     res.status(200).json(appointments);
   } catch (error) {
-    console.error("Error:", error);
     res.status(500).json({ error: "Failed to fetch appointments." });
+  }
+};
+
+// Schedule an appointment (update status and schedule time)
+module.exports.scheduleAppointment = async (req, res) => {
+  const { status, scheduleTime } = req.body;
+
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    // Update the status and schedule time
+    appointment.appointmentStatus = status || appointment.appointmentStatus;
+    appointment.scheduleTime = scheduleTime || appointment.scheduleTime;
+
+    await appointment.save();
+
+    // Send confirmation email to both clinic and user
+    const clinicMailOptions = {
+      from: process.env.EMAIL_USER,
+      to: process.env.RECIPIENT_EMAIL,
+      subject: "Appointment Scheduled",
+      html: `
+        <div>
+          <h2>Your appointment has been scheduled:</h2>
+          <p><strong>Name:</strong> ${appointment.name}</p>
+          <p><strong>Status:</strong> ${appointment.appointmentStatus}</p>
+          <p><strong>Scheduled Time:</strong> ${scheduleTime}</p>
+        </div>
+      `,
+    };
+
+    const userMailOptions = {
+      from: process.env.EMAIL_USER,
+      to: appointment.email,
+      subject: "Appointment Scheduled",
+      html: `
+        <div>
+          <h2>Your appointment has been scheduled:</h2>
+          <p><strong>Date:</strong> ${appointment.date}</p>
+          <p><strong>Status:</strong> ${appointment.appointmentStatus}</p>
+          <p><strong>Scheduled Time:</strong> ${scheduleTime}</p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(clinicMailOptions);
+    await transporter.sendMail(userMailOptions);
+
+    res.status(200).json({ success: "Appointment scheduled and emails sent!" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to schedule appointment." });
+  }
+};
+
+// Get appointments by status
+module.exports.getAppointmentsByStatus = async (req, res) => {
+  const { status } = req.params;
+
+  try {
+    const appointments = await Appointment.find({ appointmentStatus: status });
+    res.status(200).json(appointments);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch appointments by status." });
   }
 };
