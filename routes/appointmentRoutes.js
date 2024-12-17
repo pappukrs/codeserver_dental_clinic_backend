@@ -1,12 +1,12 @@
 const express = require("express");
-const { createAppointment, getAllAppointments, scheduleAppointment, getAppointmentsByStatus } = require("../controllers/appointmentController");
+const { createAppointment, getAllPendingAppointments, scheduleAppointment, getAppointmentsByStatus } = require("../controllers/appointmentController");
 const router = express.Router();
 
 // Create a new appointment
 router.post("/appointment", createAppointment);
 
 // Get all appointments
-router.get("/appointment", getAllAppointments);
+router.get("/appointment", getAllPendingAppointments);
 
 // Schedule an appointment based on id
 router.put("/appointment/schedule/:id", scheduleAppointment);
