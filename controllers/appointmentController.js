@@ -36,7 +36,7 @@ module.exports.createAppointment = async (req, res) => {
     // Send emails to clinic and user (as shown earlier)
     const clinicMailOptions = {
       from: process.env.EMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL,
+      to: process.env.CLINIC_EMAIL,
       subject: "New Appointment Received",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -108,7 +108,7 @@ module.exports.scheduleAppointment = async (req, res) => {
     // Send confirmation email to both clinic and user
     const clinicMailOptions = {
       from: process.env.EMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL,
+      to: process.env.CLINIC_EMAIL,
       subject: "Appointment Scheduled",
       html: `
         <div>
